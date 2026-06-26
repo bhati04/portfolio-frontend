@@ -80,8 +80,8 @@ export default function Contact() {
               {
                 icon: "📧",
                 label: "Email",
-                value: "shelu.16singh@gmail.com",
-                href: "mailto:shelu.16singh@gmail.com",
+                value: "shelu16singh@gmail.com",
+                href: "mailto:shelu16singh@gmail.com",
               },
               {
                 icon: "💼",
