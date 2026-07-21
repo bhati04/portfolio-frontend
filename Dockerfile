@@ -1,32 +1,33 @@
+# Stage 1: Build React app
 FROM node:18-alpine AS build
 
 WORKDIR /app
 
 COPY package*.json ./
+
 RUN npm ci
 
 COPY . .
 
-# Baked into the JS bundle at build time - must be a build-arg, not a runtime env var
+# Inject API URL during build
 ARG REACT_APP_API_BASE_URL
 ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
 
 RUN npm run build
 
-FROM node:18-alpine
 
-WORKDIR /app
+# Stage 2: Serve using Nginx
+FROM nginx:alpine
 
-RUN npm install -g serve@14
+# Remove default nginx files
+RUN rm -rf /usr/share/nginx/html/*
 
-COPY --from=build /app/build ./build
+# Copy React build
+COPY --from=build /app/build /usr/share/nginx/html
 
-RUN chown -R node:node /app
-USER node
+# Custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 3000
+EXPOSE 80
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget -qO- http://localhost:3000 || exit 1
-
-CMD ["serve", "-s", "build", "-l", "3000"]
+CMD ["nginx", "-g", "daemon off;"]
