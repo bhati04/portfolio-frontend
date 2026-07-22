@@ -1,7 +1,9 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL || "http://localhost:5000/api/contact",
+  // Use the same domain as the frontend.
+  // Nginx will proxy /api to the backend container.
+  baseURL: process.env.REACT_APP_API_BASE_URL || "/api/contact",
   timeout: 15000,
   headers: {
     "Content-Type": "application/json",
@@ -10,9 +12,7 @@ const api = axios.create({
 
 // Request interceptor
 api.interceptors.request.use(
-  (config) => {
-    return config;
-  },
+  (config) => config,
   (error) => Promise.reject(error)
 );
 
@@ -27,7 +27,7 @@ api.interceptors.response.use(
 );
 
 export const contactService = {
-  submit: (data) => api.post("/contact", data),
+  submit: (data) => api.post("/", data),
 };
 
 export default api;
