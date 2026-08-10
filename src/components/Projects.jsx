@@ -3,16 +3,16 @@ import { useInView } from "../hooks/useInView";
 
 const PROJECTS = [
   {
-    title: "Multi-Cloud K8s Platform",
-    category: "Infrastructure",
+    title: "Dockerized Applications with VPN & Jenkins CI/CD",
+    category: "CI/CD",
     description:
-      "Production-grade Kubernetes platform spanning AWS EKS and GKE with unified GitOps workflows, auto-scaling, and zero-downtime deployments for 200+ microservices.",
-    stack: ["Kubernetes", "Terraform", "ArgoCD", "Prometheus", "AWS EKS"],
-    links: { github: "#", live: "#" },
+      "Deployed and managed multiple containerized applications with Docker Compose, secured access through an integrated OpenVPN network, and automated builds and deployments using Jenkins pipelines.",
+    stack: ["Docker", "Docker Compose", "OpenVPN", "Jenkins", "Nginx"],
+    links: { github: null, live: null },
     featured: true,
     gradient: "from-iris-500/20 to-blue-500/20",
     border: "border-iris-500/20",
-    stats: { uptime: "99.99%", services: "200+", regions: "3" },
+    stats: { applications: "Multiple", access: "VPN", delivery: "Automated" },
   },
   {
     title: "DevSecOps Pipeline",
@@ -20,7 +20,7 @@ const PROJECTS = [
     description:
       "End-to-end secure CI/CD pipeline with automated SAST/DAST scanning, secret management via HashiCorp Vault, and policy enforcement using OPA Gatekeeper.",
     stack: ["GitHub Actions", "Vault", "OPA", "Trivy", "Docker"],
-    links: { github: "#", live: null },
+    links: { github: null, live: null },
     featured: true,
     gradient: "from-green-500/20 to-teal-500/20",
     border: "border-green-500/20",
@@ -32,51 +32,27 @@ const PROJECTS = [
     description:
       "Automated FinOps tool that analyzes AWS spend, identifies wasteful resources, and applies rightsizing recommendations. Saved $120K annually across 3 accounts.",
     stack: ["Python", "AWS Lambda", "DynamoDB", "Boto3", "Grafana"],
-    links: { github: "#", live: null },
+    links: { github: null, live: null },
     featured: false,
     gradient: "from-yellow-500/20 to-orange-500/20",
     border: "border-yellow-500/20",
     stats: { saved: "$120K/yr", accounts: "3", automations: "45+" },
   },
   {
-    title: "MERN Portfolio Platform",
+    title: "Serverless Portfolio Platform",
     category: "Full Stack",
     description:
-      "This very website — a production MERN stack application with MongoDB contact storage, Nodemailer alerts, and a React + Tailwind frontend deployed via CI/CD.",
-    stack: ["React", "Node.js", "MongoDB", "Express", "Tailwind"],
-    links: { github: "#", live: "#" },
+      "This website — a static React and Tailwind frontend with a secure serverless contact workflow powered by AWS Lambda and deployed via CI/CD.",
+    stack: ["React", "Tailwind", "AWS Lambda", "Function URL", "CI/CD"],
+    links: { github: null, live: null },
     featured: false,
     gradient: "from-pink-500/20 to-rose-500/20",
     border: "border-pink-500/20",
     stats: { performance: "98/100", uptime: "100%", loadTime: "<1s" },
   },
-  {
-    title: "Observability Stack",
-    category: "Monitoring",
-    description:
-      "Self-hosted observability platform with Prometheus metrics, Grafana dashboards, Loki log aggregation, and Tempo distributed tracing — deployed via Helm on K8s.",
-    stack: ["Prometheus", "Grafana", "Loki", "Tempo", "Helm"],
-    links: { github: "#", live: null },
-    featured: false,
-    gradient: "from-electric/20 to-cyan-500/20",
-    border: "border-cyan-500/20",
-    stats: { metrics: "2M+/min", retention: "90 days", alerts: "150+" },
-  },
-  {
-    title: "Microservices on EKS",
-    category: "Cloud",
-    description:
-      "Migrated a monolithic Node.js app into 12 microservices deployed on AWS EKS with service mesh (Istio), horizontal pod autoscaling, and Canary deployments.",
-    stack: ["Node.js", "Istio", "AWS EKS", "HPA", "Flagger"],
-    links: { github: "#", live: null },
-    featured: false,
-    gradient: "from-purple-500/20 to-indigo-500/20",
-    border: "border-purple-500/20",
-    stats: { services: "12", latency: "-40%", throughput: "+3x" },
-  },
 ];
 
-const FILTER_CATS = ["All", "Infrastructure", "CI/CD", "FinOps", "Full Stack", "Monitoring", "Cloud"];
+const FILTER_CATS = ["All", "CI/CD", "FinOps", "Full Stack"];
 
 export default function Projects() {
   const [activeFilter, setActiveFilter] = useState("All");
@@ -188,18 +164,24 @@ function ProjectCard({ project, index }) {
         </div>
 
         <div className="flex gap-3">
-          <a
-            href={project.links.github}
-            className="flex items-center gap-1.5 text-white/40 hover:text-white text-sm transition-colors"
-          >
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/>
-            </svg>
-            Code
-          </a>
+          {project.links.github && (
+            <a
+              href={project.links.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-white/40 hover:text-white text-sm transition-colors"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/>
+              </svg>
+              Code
+            </a>
+          )}
           {project.links.live && (
             <a
               href={project.links.live}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-iris-400 hover:text-iris-300 text-sm transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

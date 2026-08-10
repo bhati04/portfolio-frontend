@@ -9,10 +9,22 @@ const SKILL_CATEGORIES = [
     border: "border-blue-500/20",
     accent: "text-blue-400",
     skills: [
-      { name: "AWS", level: 92, icon: "🟠" },
-      { name: "Google Cloud", level: 80, icon: "🔵" },
-      { name: "Azure", level: 75, icon: "🔷" },
-      { name: "Cloudflare", level: 85, icon: "🟡" },
+      {
+        name: "AWS",
+        level: 92,
+        icon: "🟠",
+        details: [
+          "EC2",
+          "S3",
+          "Lambda",
+          "CloudFront",
+          "CloudWatch",
+          "Athena",
+          "Glue",
+          "Route 53",
+          "API Gateway",
+        ],
+      },
     ],
   },
   {
@@ -22,11 +34,22 @@ const SKILL_CATEGORIES = [
     border: "border-iris-500/20",
     accent: "text-iris-400",
     skills: [
-      { name: "Docker", level: 95, icon: "🐳" },
-      { name: "Kubernetes", level: 90, icon: "⎈" },
-      { name: "Helm", level: 85, icon: "⛵" },
-      { name: "Istio", level: 75, icon: "🌐" },
+      {
+        name: "Docker",
+        level: 95,
+        icon: "🐳",
+        details: [
+          "Images & Containers",
+          "Dockerfiles",
+          "Volumes",
+          "Networking",
+          "Docker Compose",
+          "Registries",
+          "Multi-stage Builds",
+        ],
+      },
     ],
+    learning: ["Kubernetes", "Helm", "Container orchestration"],
   },
   {
     category: "CI/CD & Automation",
@@ -37,22 +60,8 @@ const SKILL_CATEGORIES = [
     skills: [
       { name: "GitHub Actions", level: 92, icon: "🔄" },
       { name: "Jenkins", level: 80, icon: "🔧" },
-      { name: "ArgoCD", level: 85, icon: "🚀" },
-      { name: "Terraform", level: 88, icon: "🏗️" },
     ],
-  },
-  {
-    category: "Infrastructure as Code",
-    icon: "🏗️",
-    color: "from-orange-500/20 to-red-500/20",
-    border: "border-orange-500/20",
-    accent: "text-orange-400",
-    skills: [
-      { name: "Terraform", level: 90, icon: "🔷" },
-      { name: "Ansible", level: 85, icon: "🔴" },
-      { name: "Pulumi", level: 70, icon: "🌊" },
-      { name: "CloudFormation", level: 80, icon: "📦" },
-    ],
+    note: "Currently focused on core pipeline automation; advanced GitOps workflows are on my learning roadmap.",
   },
   {
     category: "Monitoring & Observability",
@@ -63,8 +72,6 @@ const SKILL_CATEGORIES = [
     skills: [
       { name: "Prometheus", level: 88, icon: "🔥" },
       { name: "Grafana", level: 90, icon: "📈" },
-      { name: "ELK Stack", level: 82, icon: "🔍" },
-      { name: "Datadog", level: 78, icon: "🐕" },
     ],
   },
   {
@@ -102,7 +109,7 @@ const SKILL_CATEGORIES = [
     skills: [
       { name: "Python", level: 88, icon: "🐍" },
       { name: "Bash/Shell", level: 90, icon: "📟" },
-      { name: "JavaScript", level: 92, icon: "🟡" },
+      { name: "JavaScript", level: 55, icon: "🟡" },
       { name: "Go (basics)", level: 65, icon: "🔵" },
     ],
   },
@@ -168,7 +175,7 @@ export default function Skills() {
 
 function SkillCategoryCard({ category, index }) {
   const [cardRef, cardInView] = useInView();
-  const { border, color, icon, accent, category: title, skills } = category;
+  const { border, color, icon, accent, category: title, skills, learning, note } = category;
 
   return (
     <div
@@ -202,9 +209,43 @@ function SkillCategoryCard({ category, index }) {
               </span>
             </div>
             <SkillBarInner level={skill.level} accent={accent} delay={si * 100} />
+            {skill.details && (
+              <div className="flex flex-wrap gap-1.5 mt-3">
+                {skill.details.map((detail) => (
+                  <span
+                    key={detail}
+                    className="px-2.5 py-1 rounded-md bg-white/5 border border-white/5 text-white/55 text-xs"
+                  >
+                    {detail}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         ))}
       </div>
+
+      {learning && (
+        <div className="mt-5 pt-4 border-t border-white/5">
+          <p className="text-white/35 text-xs mb-2">Currently learning</p>
+          <div className="flex flex-wrap gap-1.5">
+            {learning.map((item) => (
+              <span
+                key={item}
+                className="px-2.5 py-1 rounded-md border border-iris-500/15 text-iris-300/70 text-xs"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {note && (
+        <p className="mt-5 pt-4 border-t border-white/5 text-white/35 text-xs leading-relaxed">
+          {note}
+        </p>
+      )}
     </div>
   );
 }

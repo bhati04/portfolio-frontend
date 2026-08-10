@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import { useInView } from "../hooks/useInView";
-import { contactService } from "../utils/api";
+import { submitContactForm } from "../services/contact";
 
 const INITIAL_FORM = {
   name: "",
   email: "",
-  company: "",
   subject: "",
   message: "",
-  budget: "",
-  timeline: "",
+  website: "",
 };
 
 const STATUS = { idle: "idle", loading: "loading", success: "success", error: "error" };
@@ -29,13 +27,17 @@ export default function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name || !form.email || !form.message) return;
+    if (!form.name.trim() || !form.email.trim() || !form.subject || !form.message.trim()) {
+      setStatus(STATUS.error);
+      setErrorMsg("Please complete all required fields before sending your message.");
+      return;
+    }
 
     setStatus(STATUS.loading);
     setErrorMsg("");
 
     try {
-      await contactService.submit(form);
+      await submitContactForm(form);
       setStatus(STATUS.success);
       setForm(INITIAL_FORM);
     } catch (err) {
@@ -146,7 +148,7 @@ export default function Contact() {
             }`}
           >
             {status === STATUS.success ? (
-              <div className="text-center py-16">
+              <div className="text-center py-16" role="status" aria-live="polite">
                 <div className="text-6xl mb-6">✅</div>
                 <h3 className="text-white text-2xl font-bold mb-3">Message Sent!</h3>
                 <p className="text-white/50 text-sm mb-8">
@@ -163,139 +165,118 @@ export default function Contact() {
               <form onSubmit={handleSubmit} className="space-y-5">
                 <h3 className="text-white font-semibold text-xl mb-6">Send a Message</h3>
 
+                {/* Honeypot field: Lambda should silently accept and discard submissions when populated. */}
+                <div className="absolute -left-[9999px]" aria-hidden="true">
+                  <label htmlFor="contact-website">Website</label>
+                  <input
+                    id="contact-website"
+                    type="text"
+                    name="website"
+                    value={form.website}
+                    onChange={handleChange}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                </div>
+
                 {/* Name + Email row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <label className={labelClass}>
+                    <label htmlFor="contact-name" className={labelClass}>
                       Full Name <span className="text-iris-400">*</span>
                     </label>
                     <input
+                      id="contact-name"
                       type="text"
                       name="name"
                       value={form.name}
                       onChange={handleChange}
                       required
+                      maxLength={100}
+                      autoComplete="name"
                       placeholder="Shelu Singh"
                       className={inputClass}
                     />
                   </div>
                   <div>
-                    <label className={labelClass}>
+                    <label htmlFor="contact-email" className={labelClass}>
                       Email Address <span className="text-iris-400">*</span>
                     </label>
                     <input
+                      id="contact-email"
                       type="email"
                       name="email"
                       value={form.email}
                       onChange={handleChange}
                       required
+                      maxLength={254}
+                      autoComplete="email"
                       placeholder="you@company.com"
                       className={inputClass}
                     />
                   </div>
                 </div>
 
-                {/* Company + Subject row */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className={labelClass}>Company / Organization</label>
-                    <input
-                      type="text"
-                      name="company"
-                      value={form.company}
-                      onChange={handleChange}
-                      placeholder="Your Company"
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>
-                      Subject <span className="text-iris-400">*</span>
-                    </label>
-                    <select
-                      name="subject"
-                      value={form.subject}
-                      onChange={handleChange}
-                      required
-                      className={inputClass + " cursor-pointer"}
-                    >
-                      <option value="" disabled className="bg-night-800">
-                        Select a topic
+                {/* Subject */}
+                <div>
+                  <label htmlFor="contact-subject" className={labelClass}>
+                    What would you like to discuss? <span className="text-iris-400">*</span>
+                  </label>
+                  <select
+                    id="contact-subject"
+                    name="subject"
+                    value={form.subject}
+                    onChange={handleChange}
+                    required
+                    className={inputClass + " cursor-pointer"}
+                  >
+                    <option value="" disabled className="bg-night-800">
+                      Choose a topic
+                    </option>
+                    {[
+                      "Job Opportunity",
+                      "Cloud & DevOps",
+                      "Data Engineering",
+                      "Freelance Project",
+                      "General Message",
+                    ].map((topic) => (
+                      <option key={topic} value={topic} className="bg-night-800">
+                        {topic}
                       </option>
-                      {[
-                        "Cloud Infrastructure",
-                        "DevOps Consulting",
-                        "Kubernetes Setup",
-                        "CI/CD Pipeline",
-                        "Full Stack Development",
-                        "Freelance Project",
-                        "Full-time Role",
-                        "Other",
-                      ].map((o) => (
-                        <option key={o} value={o} className="bg-night-800">
-                          {o}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                {/* Budget + Timeline row */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className={labelClass}>Budget Range</label>
-                    <select
-                      name="budget"
-                      value={form.budget}
-                      onChange={handleChange}
-                      className={inputClass + " cursor-pointer"}
-                    >
-                      <option value="" className="bg-night-800">Select budget</option>
-                      {["< ₹50K", "₹50K–₹2L", "₹2L–₹5L", "₹5L+", "Let's discuss"].map((o) => (
-                        <option key={o} value={o} className="bg-night-800">
-                          {o}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className={labelClass}>Timeline</label>
-                    <select
-                      name="timeline"
-                      value={form.timeline}
-                      onChange={handleChange}
-                      className={inputClass + " cursor-pointer"}
-                    >
-                      <option value="" className="bg-night-800">Project timeline</option>
-                      {["ASAP", "1–2 weeks", "1 month", "2–3 months", "Long-term"].map((o) => (
-                        <option key={o} value={o} className="bg-night-800">
-                          {o}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Message */}
                 <div>
-                  <label className={labelClass}>
+                  <label htmlFor="contact-message" className={labelClass}>
                     Message <span className="text-iris-400">*</span>
                   </label>
                   <textarea
+                    id="contact-message"
                     name="message"
                     value={form.message}
                     onChange={handleChange}
                     required
+                    minLength={10}
+                    maxLength={2000}
                     rows={5}
                     placeholder="Tell me about your project, infrastructure challenges, or what you're looking to build..."
                     className={inputClass + " resize-none"}
                   />
+                  <div className="mt-2 flex justify-end text-white/25 text-xs font-mono">
+                    {form.message.length}/2000
+                  </div>
                 </div>
 
                 {/* Error */}
                 {status === STATUS.error && (
-                  <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
-                    <span>⚠️</span>
+                  <div
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
+                    role="alert"
+                    aria-live="assertive"
+                  >
+                    <span aria-hidden="true">⚠️</span>
                     {errorMsg}
                   </div>
                 )}
@@ -325,7 +306,7 @@ export default function Contact() {
                 </button>
 
                 <p className="text-white/25 text-xs text-center">
-                  Your data is stored securely and never shared with third parties.
+                  No spam—just a direct reply to your message.
                 </p>
               </form>
             )}

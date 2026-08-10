@@ -28,7 +28,7 @@ export default function Footer() {
           </div>
 
           <div className="text-white/30 text-xs text-center">
-            Built with React + Tailwind + Node.js
+            Built with React + Tailwind, powered by AWS Lambda
             <br />
             <span className="text-iris-500/60">© {new Date().getFullYear()} Shelu Singh</span>
           </div>
