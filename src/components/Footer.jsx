@@ -16,13 +16,18 @@ export default function Footer() {
           </div>
 
           <div className="flex items-center gap-6 text-white/40 text-sm">
-            {["About", "Skills", "Projects", "Contact"].map((link) => (
+            {[
+              { label: "About", href: "#hero" },
+              { label: "Skills", href: "#skills" },
+              { label: "Projects", href: "#projects" },
+              { label: "Contact", href: "#contact" },
+            ].map((link) => (
               <a
-                key={link}
-                href={`#${link.toLowerCase()}`}
+                key={link.href}
+                href={link.href}
                 className="hover:text-white/70 transition-colors"
               >
-                {link}
+                {link.label}
               </a>
             ))}
           </div>
